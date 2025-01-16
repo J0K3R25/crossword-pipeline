@@ -25,6 +25,9 @@ import os
 # Add the DPR folder to the system path
 sys.path.append(os.path.join(os.path.dirname(__file__), 'DPR'))
 
+# Threshold for white cells
+threshold = 0.4
+
 def solve(crossword):
     solver = BPSolver(crossword, max_candidates=500000)
     solution = solver.solve(num_iters=10, iterative_improvement_steps=5)
@@ -51,7 +54,7 @@ def def_cell_range(row1, col1, row2, col2):
     return (def_cell(row1,col1)+ ":" + def_cell(row2,col2))
 
 # uses threshold to determine if cell is white 
-def is_white_cell(r,g,b,threshold):
+def is_white_cell(r,g,b):
     # Convert to grayscale for color thresholding
     grayscale = 0.299 * r + 0.587 * g + 0.114 * b
     return grayscale > threshold 
@@ -77,7 +80,7 @@ def is_background_set_single_cell(cell):
         green = background_color.get('green', 0)
         blue = background_color.get('blue', 0)
 
-        if (is_white_cell(red,green,blue,0.3)):
+        if (is_white_cell(red,green,blue)):
             return False  # Background is white
         else:
             return True  # Background is set to something else
@@ -111,7 +114,7 @@ def is_background_set(range):
 
                 
                 # Check if the background is set to something other than white
-                if (is_white_cell(red,green,blue,0.3)):
+                if (is_white_cell(red,green,blue)):
                     row_states.append(False)  # Background is white
                 else:
                     row_states.append(True)   # Background is set to something else
